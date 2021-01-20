@@ -51,13 +51,23 @@ ORDER BY
     
 -- display the montly and weekly session 
 
-SELECT YEAR(website_sessions.created_at) AS yr,
+SELECT 
+		YEAR(website_sessions.created_at) AS yr,
 		MONTH(website_sessions.created_at) AS mo,
         min(date(website_sessions.created_at)) as week_start,
         COUNT(website_sessions.website_session_id) As ct_of_session
 FROM website_sessions
 GROUP BY 1,2, week(created_at)
 ORDER BY week_start;
+
+-- session by device type
+ SELECT 
+	device_type,
+	count(Distinct website_session_id) AS sessions,
+    ROUND(count(*) *100.0/sum(count(*)) OVER(),2) percentage_of_total
+ FROM website_sessions
+ GROUP BY device_type; 
+
 
 -- display the monthly sessions by utm_source for 2019
 SELECT 
@@ -75,7 +85,6 @@ GROUP BY 1,2;
 
 
 -- display % of total sesions for each utm_source for 2019
-
 SELECT 
 	YEAR(website_sessions.created_at) AS yr,
     MONTH(website_sessions.created_at) AS mo,
@@ -90,8 +99,7 @@ WHERE year(website_sessions.created_at)='2019'
 GROUP BY 1,2;
    
   
--- What is the session to order conversion rate by month?   
-
+-- What is the session to order conversion rate by month?  
 SELECT 
 		YEAR(website_sessions.created_at) as yr,	
 		MONTH(website_sessions.created_at) as mo,
@@ -102,22 +110,8 @@ FROM website_sessions
 LEFT JOIN orders
 	on website_sessions.website_session_id = orders.website_session_id
 GROUP BY 1,2
-ORDER BY session_conv_rt desc; 
-   
-   
--- session by device type
- SELECT 
-	device_type,
-	count(Distinct website_session_id) AS sessions,
-    ROUND(count(*) *100.0/sum(count(*)) OVER(),2) percentage_of_total
- FROM website_sessions
- GROUP BY device_type;
-
-  
-      
-   
-   
-   
+ORDER BY session_conv_rt desc;    
+     
    
     
 
